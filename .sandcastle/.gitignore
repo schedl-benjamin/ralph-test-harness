@@ -2,3 +2,5 @@
 logs/
 worktrees/
 .sandcastle/patch-edit/
+_package.json
+_pnpm-lock.yaml

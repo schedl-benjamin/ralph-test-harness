@@ -38,9 +38,11 @@ RUN curl -fsSL https://claude.ai/install.sh | bash
 ENV PATH="/home/agent/.local/bin:${PATH}"
 
 # Pre-bake node_modules so onSandboxReady pnpm install is a near-instant no-op.
+# These files are copied into .sandcastle/ before build (see sandcastle:build script).
 # The pnpm store lives outside the workspace so it doesn't bloat the bind-mount.
 WORKDIR /home/agent/workspace
-COPY --chown=agent:agent package.json pnpm-lock.yaml ./
+COPY --chown=agent:agent _package.json ./package.json
+COPY --chown=agent:agent _pnpm-lock.yaml ./pnpm-lock.yaml
 RUN pnpm install --frozen-lockfile --store-dir /home/agent/.pnpm-store
 
 ENTRYPOINT ["entrypoint.sh"]

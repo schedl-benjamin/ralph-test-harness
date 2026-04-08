@@ -8,7 +8,7 @@
     "typecheck": "tsc --noEmit",
     "ralph": "pnpm tsx .sandcastle/sequential-loop/main.ts",
     "ralph:simple": "pnpm tsx .sandcastle/simple-loop/main.ts",
-    "sandcastle:build": "pnpm sandcastle build-image --image-name sandcastle:ralph-test-harness"
+    "sandcastle:build": "cp package.json .sandcastle/_package.json && cp pnpm-lock.yaml .sandcastle/_pnpm-lock.yaml && pnpm sandcastle build-image --image-name sandcastle:ralph-test-harness"
   },
   "dependencies": {
     "@ai-hero/sandcastle": "^0.1.8",
