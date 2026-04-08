@@ -1,0 +1,4 @@
+# Force LF line endings for shell scripts — prevents CRLF corruption
+# that breaks Docker entrypoint execution on Linux containers.
+*.sh text eol=lf
+entrypoint.sh text eol=lf
