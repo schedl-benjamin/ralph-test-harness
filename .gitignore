@@ -4,3 +4,4 @@ dist/
 .sandcastle/logs/
 .sandcastle/worktrees/
 *.tsbuildinfo
+patch-edit/
