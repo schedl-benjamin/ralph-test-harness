@@ -1,0 +1,16 @@
+diff --git a/dist/SandboxLifecycle.js b/dist/SandboxLifecycle.js
+index 664fff77f22b1ba44a1bc7eb85ba2827f37eff57..bc3a74e2572924e355d8e29c9d128501102433ef 100644
+--- a/dist/SandboxLifecycle.js
++++ b/dist/SandboxLifecycle.js
+@@ -81,7 +81,10 @@ export const withSandboxLifecycle = (options, work) => Effect.gen(function* () {
+         // Check if there are any new commits on the temp branch
+         const hasNewCommits = yield* Effect.promise(async () => {
+             try {
+-                const { stdout } = await execAsync(`git rev-list "${baseHead}..HEAD" --count`, { cwd: hostSideWorktreePath });
++                // Use branch ref from hostRepoDir instead of checking HEAD in worktree.
++                // On Windows, the worktree .git file may have MSYS paths (/c/dev/...)
++                // set by entrypoint.sh, causing host-side git to fail.
++                const { stdout } = await execAsync(`git rev-list "${baseHead}..refs/heads/${resolvedBranch}" --count`, { cwd: hostRepoDir });
+                 return parseInt(stdout.trim(), 10) > 0;
+             }
+             catch {

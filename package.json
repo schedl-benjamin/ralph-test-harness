@@ -1,0 +1,27 @@
+{
+  "name": "ralph-test-harness",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "ralph": "pnpm tsx .sandcastle/sequential-loop/main.ts",
+    "ralph:simple": "pnpm tsx .sandcastle/simple-loop/main.ts",
+    "sandcastle:build": "pnpm sandcastle build-image --image-name sandcastle:ralph-test-harness"
+  },
+  "dependencies": {
+    "@ai-hero/sandcastle": "^0.1.8",
+    "tsx": "^4.21.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.0",
+    "vitest": "^3.0.0"
+  },
+  "packageManager": "pnpm@9.15.0",
+  "pnpm": {
+    "patchedDependencies": {
+      "@ai-hero/sandcastle": "patches/@ai-hero__sandcastle.patch"
+    }
+  }
+}
