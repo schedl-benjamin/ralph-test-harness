@@ -1,6 +1,14 @@
 # Ralph Test Harness
 
-Minimal repo for validating Sandcastle/Ralph loop on Windows. TypeScript + Vitest.
+Minimal repo for validating Sandcastle/Ralph loop. TypeScript + Vitest.
+
+## Environment
+
+This repo must live on WSL2's native ext4 filesystem (e.g., `~/ralph-test-harness/`),
+NOT on `/mnt/c/`. Docker bind-mounts from the Windows filesystem cross the 9P bridge
+and are ~10x slower.
+
+Prerequisites: node 22+, pnpm 9.15+, git, gh, Docker Desktop with WSL2 integration.
 
 Be extremely concise. No filler, no preamble.
 

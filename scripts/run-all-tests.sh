@@ -23,11 +23,10 @@ run_test() {
   fi
 }
 
-run_test "Docker Boot + Path Conversion" "test-docker-boot.sh"
+run_test "Docker Boot" "test-docker-boot.sh"
 run_test "Git Operations in Container" "test-git-ops.sh"
 run_test "GitHub CLI in Container" "test-gh-cli.sh"
 run_test "Supabase CLI in Container" "test-supabase-cli.sh"
-run_test "Path Restoration on Exit" "test-path-restore.sh"
 
 echo ""
 echo "============================================"

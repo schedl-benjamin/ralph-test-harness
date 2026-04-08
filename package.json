@@ -18,10 +18,5 @@
     "typescript": "^5.8.0",
     "vitest": "^3.0.0"
   },
-  "packageManager": "pnpm@9.15.0",
-  "pnpm": {
-    "patchedDependencies": {
-      "@ai-hero/sandcastle": "patches/@ai-hero__sandcastle.patch"
-    }
-  }
+  "packageManager": "pnpm@9.15.0"
 }
