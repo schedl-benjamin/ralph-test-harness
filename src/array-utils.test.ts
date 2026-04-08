@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { unique, flatten } from "./array-utils.js";
+import { unique, flatten, chunk } from "./array-utils.js";
 
 describe("unique", () => {
   it("removes duplicate primitives", () => {
@@ -42,5 +42,27 @@ describe("flatten", () => {
 
   it("does not flatten deeper than one level", () => {
     expect(flatten([[1, [2, 3]], 4])).toEqual([1, [2, 3], 4]);
+  });
+});
+
+describe("chunk", () => {
+  it("splits array into groups of given size", () => {
+    expect(chunk([1, 2, 3, 4, 5], 2)).toEqual([[1, 2], [3, 4], [5]]);
+  });
+
+  it("handles array evenly divisible by size", () => {
+    expect(chunk([1, 2, 3, 4], 2)).toEqual([[1, 2], [3, 4]]);
+  });
+
+  it("handles size larger than array length", () => {
+    expect(chunk([1, 2], 5)).toEqual([[1, 2]]);
+  });
+
+  it("handles empty array", () => {
+    expect(chunk([], 3)).toEqual([]);
+  });
+
+  it("works with strings", () => {
+    expect(chunk(["a", "b", "c"], 2)).toEqual([["a", "b"], ["c"]]);
   });
 });
