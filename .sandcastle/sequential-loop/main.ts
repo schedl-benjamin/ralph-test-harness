@@ -26,7 +26,12 @@ try {
 const MAX_ITERATIONS = 5;
 
 const hooks = {
-  onSandboxReady: [{ command: "pnpm install --frozen-lockfile" }],
+  onSandboxReady: [
+    // Use a store dir outside the bind-mounted workspace to avoid
+    // long pnpm-store paths that exceed Windows MAX_PATH (260 chars)
+    // and cause EPERM on worktree cleanup.
+    { command: "pnpm install --frozen-lockfile --store-dir /home/agent/.pnpm-store" },
+  ],
 };
 const copyToSandbox: string[] = [];
 
