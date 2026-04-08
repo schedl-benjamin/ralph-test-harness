@@ -34,7 +34,7 @@ sleep 3
 # Check 1: supabase CLI exists
 SB_VER=$(MSYS_NO_PATHCONV=1 docker exec "$CONTAINER" supabase --version 2>&1 || echo "NOT FOUND")
 echo "  Supabase version: $SB_VER"
-if echo "$SB_VER" | grep -qi "supabase\|version"; then
+if echo "$SB_VER" | grep -qE "supabase|version|[0-9]+\.[0-9]+\.[0-9]+"; then
   echo "  PASS: supabase CLI installed"
 else
   echo "  FAIL: supabase CLI not found"
