@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { add, subtract, multiply } from "./calculator.js";
+import { add, subtract, multiply, divide } from "./calculator.js";
 
 describe("calculator", () => {
   it("adds two numbers", () => {
@@ -16,5 +16,13 @@ describe("calculator", () => {
 
   it("multiplies by zero", () => {
     expect(multiply(0, 100)).toBe(0);
+  });
+
+  it("divides two numbers", () => {
+    expect(divide(10, 2)).toBe(5);
+  });
+
+  it("throws on divide by zero", () => {
+    expect(() => divide(10, 0)).toThrow("Cannot divide by zero");
   });
 });
