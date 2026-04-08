@@ -1,5 +1,5 @@
 diff --git a/dist/SandboxFactory.js b/dist/SandboxFactory.js
-index f96bb2dcf07d71a446777f5954fa25e8e117c0f9..15a183db5c2b741e41d84b9f16de9cf2f4097e29 100644
+index f96bb2dcf07d71a446777f5954fa25e8e117c0f9..8f44cafa06e5e7599bd36419357b1c8b649fac9d 100644
 --- a/dist/SandboxFactory.js
 +++ b/dist/SandboxFactory.js
 @@ -176,9 +176,13 @@ export const WorktreeDockerSandboxFactory = {
@@ -18,6 +18,19 @@ index f96bb2dcf07d71a446777f5954fa25e8e117c0f9..15a183db5c2b741e41d84b9f16de9cf2
                      ];
                      // On signals: remove the container but preserve the worktree so the
                      // developer can inspect the agent's work.
+@@ -196,7 +200,11 @@ export const WorktreeDockerSandboxFactory = {
+                         volumeMounts,
+                         workdir: SANDBOX_WORKSPACE_DIR,
+                         user: `${hostUid}:${hostGid}`,
+-                    }).pipe(Effect.andThen(chownInContainer(containerName, `${hostUid}:${hostGid}`, "/home/agent")), Effect.tap(() => Effect.sync(() => {
++                    }).pipe(Effect.andThen(chownInContainer(containerName, `${hostUid}:${hostGid}`, "/home/agent")),
++                    // Also chown the host .git dir mount so the container user can write git objects.
++                    // On Docker Desktop for Windows, bind-mounted NTFS dirs appear as root-owned.
++                    Effect.andThen(chownInContainer(containerName, `${hostUid}:${hostGid}`, toDockerVolume(gitDir))),
++                    Effect.tap(() => Effect.sync(() => {
+                         // exit handler only removes the container; the worktree is preserved
+                         // on abnormal exit just as on SIGINT/SIGTERM.
+                         process.on("exit", cleanupContainerOnly);
 diff --git a/dist/SandboxLifecycle.js b/dist/SandboxLifecycle.js
 index 664fff77f22b1ba44a1bc7eb85ba2827f37eff57..bc3a74e2572924e355d8e29c9d128501102433ef 100644
 --- a/dist/SandboxLifecycle.js
