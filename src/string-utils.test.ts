@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { reverse, capitalize } from "./string-utils.js";
+import { reverse, capitalize, isPalindrome } from "./string-utils.js";
 
 describe("reverse", () => {
   it("reverses a string", () => {
@@ -30,5 +30,31 @@ describe("capitalize", () => {
 
   it("handles single character", () => {
     expect(capitalize("a")).toBe("A");
+  });
+});
+
+describe("isPalindrome", () => {
+  it("returns true for a simple palindrome", () => {
+    expect(isPalindrome("racecar")).toBe(true);
+  });
+
+  it("returns false for a non-palindrome", () => {
+    expect(isPalindrome("hello")).toBe(false);
+  });
+
+  it("is case-insensitive", () => {
+    expect(isPalindrome("Racecar")).toBe(true);
+  });
+
+  it("ignores non-alphanumeric characters", () => {
+    expect(isPalindrome("A man, a plan, a canal: Panama")).toBe(true);
+  });
+
+  it("handles empty string", () => {
+    expect(isPalindrome("")).toBe(true);
+  });
+
+  it("handles single character", () => {
+    expect(isPalindrome("a")).toBe(true);
   });
 });
