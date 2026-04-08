@@ -19,14 +19,14 @@ DOCKER_GIT=$(to_docker_vol "$REPO_DIR/.git")
 GH_TOKEN=$(grep '^GH_TOKEN=' "$REPO_DIR/.sandcastle/.env" | cut -d= -f2)
 
 cleanup() {
-  docker rm -f "$CONTAINER" 2>/dev/null || true
+  MSYS_NO_PATHCONV=1 docker rm -f "$CONTAINER" 2>/dev/null || true
   git -C "$REPO_DIR" worktree remove --force "$WORKTREE_DIR" 2>/dev/null || true
   git -C "$REPO_DIR" branch -D "test/gh-$$" 2>/dev/null || true
   git -C "$REPO_DIR" worktree prune 2>/dev/null || true
 }
 trap cleanup EXIT
 
-docker run -d --name "$CONTAINER" \
+MSYS_NO_PATHCONV=1 docker run -d --name "$CONTAINER" \
   -e "GH_TOKEN=$GH_TOKEN" \
   -v "$DOCKER_WORKTREE:/home/agent/workspace" \
   -v "$DOCKER_GIT:$DOCKER_GIT" \
@@ -36,25 +36,22 @@ docker run -d --name "$CONTAINER" \
 sleep 3
 
 # Check 1: gh CLI installed
-docker exec "$CONTAINER" gh --version > /dev/null
+MSYS_NO_PATHCONV=1 docker exec "$CONTAINER" gh --version > /dev/null
 echo "  PASS: gh CLI installed"
 
 # Check 2: gh auth status
-AUTH_OUT=$(docker exec "$CONTAINER" gh auth status 2>&1 || true)
-echo "  gh auth: $AUTH_OUT"
+AUTH_OUT=$(MSYS_NO_PATHCONV=1 docker exec "$CONTAINER" gh auth status 2>&1 || true)
 if echo "$AUTH_OUT" | grep -qi "logged in"; then
   echo "  PASS: gh authenticated"
 else
-  echo "  WARN: gh auth status unclear (may still work via GH_TOKEN)"
+  echo "  WARN: gh auth unclear — trying issue list anyway"
 fi
 
 # Check 3: List issues from the test repo
-ISSUES=$(docker exec "$CONTAINER" gh issue list --repo schedl-benjamin/ralph-test-harness --label Sandcastle --state open --json number,title 2>&1)
+ISSUES=$(MSYS_NO_PATHCONV=1 docker exec "$CONTAINER" gh issue list --repo schedl-benjamin/ralph-test-harness --label Sandcastle --state open --json number,title 2>&1)
 echo "  Issues: $ISSUES"
 if echo "$ISSUES" | grep -q "number"; then
   echo "  PASS: gh issue list returns issues"
-elif echo "$ISSUES" | grep -q '\[\]'; then
-  echo "  PASS: gh issue list works (no issues yet — expected before issue creation)"
 else
   echo "  FAIL: gh issue list failed"
   exit 1

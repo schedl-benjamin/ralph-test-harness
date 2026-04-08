@@ -16,8 +16,13 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | d
     && apt-get update && apt-get install -y gh \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Supabase CLI
-RUN curl -fsSL https://raw.githubusercontent.com/supabase/cli/main/install.sh | sh
+# Install Supabase CLI (direct binary download — install.sh is unreliable in Docker)
+RUN ARCH=$(dpkg --print-architecture) && \
+    curl -fsSL "https://github.com/supabase/cli/releases/latest/download/supabase_linux_${ARCH}.tar.gz" \
+    -o /tmp/supabase.tar.gz && \
+    tar -xzf /tmp/supabase.tar.gz -C /usr/local/bin supabase && \
+    rm /tmp/supabase.tar.gz && \
+    chmod +x /usr/local/bin/supabase
 
 # Copy entrypoint before switching to non-root user
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh

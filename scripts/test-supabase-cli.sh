@@ -16,14 +16,14 @@ DOCKER_WORKTREE=$(to_docker_vol "$WORKTREE_DIR")
 DOCKER_GIT=$(to_docker_vol "$REPO_DIR/.git")
 
 cleanup() {
-  docker rm -f "$CONTAINER" 2>/dev/null || true
+  MSYS_NO_PATHCONV=1 docker rm -f "$CONTAINER" 2>/dev/null || true
   git -C "$REPO_DIR" worktree remove --force "$WORKTREE_DIR" 2>/dev/null || true
   git -C "$REPO_DIR" branch -D "test/sb-$$" 2>/dev/null || true
   git -C "$REPO_DIR" worktree prune 2>/dev/null || true
 }
 trap cleanup EXIT
 
-docker run -d --name "$CONTAINER" \
+MSYS_NO_PATHCONV=1 docker run -d --name "$CONTAINER" \
   -v "$DOCKER_WORKTREE:/home/agent/workspace" \
   -v "$DOCKER_GIT:$DOCKER_GIT" \
   -w /home/agent/workspace \
@@ -32,7 +32,7 @@ docker run -d --name "$CONTAINER" \
 sleep 3
 
 # Check 1: supabase CLI exists
-SB_VER=$(docker exec "$CONTAINER" supabase --version 2>&1 || echo "NOT FOUND")
+SB_VER=$(MSYS_NO_PATHCONV=1 docker exec "$CONTAINER" supabase --version 2>&1 || echo "NOT FOUND")
 echo "  Supabase version: $SB_VER"
 if echo "$SB_VER" | grep -qi "supabase\|version"; then
   echo "  PASS: supabase CLI installed"
