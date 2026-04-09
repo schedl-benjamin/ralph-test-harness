@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { add, subtract, multiply, divide } from "./calculator.js";
+import { add, subtract, multiply, divide, power } from "./calculator.js";
 
 describe("calculator", () => {
   it("adds two numbers", () => {
@@ -24,5 +24,17 @@ describe("calculator", () => {
 
   it("throws on divide by zero", () => {
     expect(() => divide(10, 0)).toThrow("Cannot divide by zero");
+  });
+
+  it("raises a number to a power", () => {
+    expect(power(2, 3)).toBe(8);
+  });
+
+  it("returns 1 when the exponent is zero", () => {
+    expect(power(5, 0)).toBe(1);
+  });
+
+  it("returns 1 for zero to the zero power", () => {
+    expect(power(0, 0)).toBe(1);
   });
 });
