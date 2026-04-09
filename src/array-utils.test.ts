@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { unique, flatten, chunk } from "./array-utils.js";
+import { unique, flatten, chunk, clamp } from "./array-utils.js";
 
 describe("unique", () => {
   it("removes duplicate primitives", () => {
@@ -64,5 +64,23 @@ describe("chunk", () => {
 
   it("works with strings", () => {
     expect(chunk(["a", "b", "c"], 2)).toEqual([["a", "b"], ["c"]]);
+  });
+});
+
+describe("clamp", () => {
+  it("returns value when it is within the range", () => {
+    expect(clamp(5, 1, 10)).toBe(5);
+  });
+
+  it("returns min when value is below the range", () => {
+    expect(clamp(0, 1, 10)).toBe(1);
+  });
+
+  it("returns max when value is above the range", () => {
+    expect(clamp(11, 1, 10)).toBe(10);
+  });
+
+  it("throws when min is greater than max", () => {
+    expect(() => clamp(5, 10, 1)).toThrow("min cannot be greater than max");
   });
 });
