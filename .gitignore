@@ -5,3 +5,5 @@ dist/
 .sandcastle/worktrees/
 *.tsbuildinfo
 patch-edit/
+.codex/
+.codex-worktrees/

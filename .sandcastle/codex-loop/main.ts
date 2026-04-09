@@ -166,12 +166,9 @@ async function main() {
 
     try {
       console.log("  Running Codex CLI...");
-      // Use dangerously-bypass on Windows (worktree IS our sandbox).
-      // On WSL2/Linux, --full-auto works fine.
-      const isWindows = process.platform === "win32";
-      const sandboxFlag = isWindows
-        ? "--dangerously-bypass-approvals-and-sandbox"
-        : "--full-auto";
+      // Codex built-in sandbox handles isolation.
+      
+      const sandboxFlag = "--full-auto";
 
       const result = spawnSync(
         "codex",
@@ -215,6 +212,31 @@ async function main() {
     } catch (err) {
       console.error(
         `  Validation FAILED: ${(err as Error).message?.split("\n")[0]}`
+      );
+      cleanupWorktree(worktreePath, branch);
+      continue;
+    }
+
+    // Phase 3.5: Commit changes from outside the sandbox
+    // Codex sandbox makes .git worktree metadata read-only, so git commit
+    // fails inside the sandbox. We commit here on the host instead.
+    console.log("  Committing changes...");
+    try {
+      const status = exec("git status --porcelain", worktreePath);
+      if (!status) {
+        console.log("  No changes detected. Codex may not have made changes.");
+        cleanupWorktree(worktreePath, branch);
+        continue;
+      }
+      exec("git add -A -- ':!.codex'", worktreePath);
+      exec(
+        `git commit -m "CODEX: ${issue.title} (#${issue.number})"`,
+        worktreePath
+      );
+      console.log("  Committed.");
+    } catch (err) {
+      console.error(
+        `  Commit failed: ${(err as Error).message?.split("\n")[0]}`
       );
       cleanupWorktree(worktreePath, branch);
       continue;

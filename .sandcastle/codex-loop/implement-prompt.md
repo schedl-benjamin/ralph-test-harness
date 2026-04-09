@@ -15,8 +15,7 @@ You are implementing GitHub issue #{{ISSUE_NUMBER}}: {{ISSUE_TITLE}}
 4. Run the feedback loops and fix any failures:
    - `pnpm run typecheck`
    - `pnpm run test`
-5. Commit your changes with the prefix `CODEX:` — for example:
-   `git commit -m "CODEX: Add power function with tests (#{{ISSUE_NUMBER}})"`
+5. Do NOT run `git add` or `git commit` — the harness commits for you.
 6. If the issue involves frontend changes, also ensure E2E tests pass:
    - `pnpm run test:e2e`
 
