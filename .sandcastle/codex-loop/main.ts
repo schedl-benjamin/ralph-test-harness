@@ -228,7 +228,7 @@ async function main() {
         cleanupWorktree(worktreePath, branch);
         continue;
       }
-      exec("git add -A -- ':!.codex'", worktreePath);
+      exec("git add -A -- ':!.codex' ':!test-results'", worktreePath);
       exec(
         `git commit -m "CODEX: ${issue.title} (#${issue.number})"`,
         worktreePath
