@@ -15,6 +15,11 @@ export function divide(a: number, b: number): number {
   return a / b;
 }
 
+export function modulo(a: number, b: number): number {
+  if (b === 0) throw new Error("Cannot modulo by zero");
+  return a % b;
+}
+
 export function power(base: number, exp: number): number {
   if (exp === 0) return 1;
   return base ** exp;
