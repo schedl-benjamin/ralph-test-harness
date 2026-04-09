@@ -10,7 +10,7 @@ export default defineConfig({
     trace: "on-first-retry",
   },
   webServer: {
-    command: "pnpm tsx src/server.ts",
+    command: "pnpm dev",
     port: 3000,
     reuseExistingServer: true,
   },
