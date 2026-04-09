@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { reverse, capitalize, isPalindrome } from "./string-utils.js";
+import { reverse, capitalize, isPalindrome, truncate } from "./string-utils.js";
 
 describe("reverse", () => {
   it("reverses a string", () => {
@@ -56,5 +56,19 @@ describe("isPalindrome", () => {
 
   it("handles single character", () => {
     expect(isPalindrome("a")).toBe(true);
+  });
+});
+
+describe("truncate", () => {
+  it("returns the original string when it fits within maxLen", () => {
+    expect(truncate("hello", 5)).toBe("hello");
+  });
+
+  it("truncates longer strings and appends an ellipsis", () => {
+    expect(truncate("hello world", 8)).toBe("hello...");
+  });
+
+  it("throws when maxLen is less than 3", () => {
+    expect(() => truncate("hello", 2)).toThrowError();
   });
 });

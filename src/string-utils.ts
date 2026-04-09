@@ -11,3 +11,15 @@ export function isPalindrome(str: string): boolean {
   const cleaned = str.toLowerCase().replace(/[^a-z0-9]/g, "");
   return cleaned === reverse(cleaned);
 }
+
+export function truncate(str: string, maxLen: number): string {
+  if (maxLen < 3) {
+    throw new Error("maxLen must be at least 3");
+  }
+
+  if (str.length <= maxLen) {
+    return str;
+  }
+
+  return str.slice(0, maxLen - 3) + "...";
+}
