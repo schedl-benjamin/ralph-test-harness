@@ -5,6 +5,14 @@ test.describe("Calculator", () => {
     await page.goto("/");
   });
 
+  test("qa 1.1 basic layout is visible", async ({ page }) => {
+    await expect(page.getByRole("spinbutton", { name: "First number" })).toBeVisible();
+    await expect(page.getByRole("spinbutton", { name: "Second number" })).toBeVisible();
+    await expect(page.getByLabel("Operation")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Calculate" })).toBeVisible();
+    await expect(page.getByTestId("calc-result")).toBeVisible();
+  });
+
   test("page loads with calculator section", async ({ page }) => {
     await expect(page.getByTestId("num-a")).toBeVisible();
     await expect(page.getByTestId("num-b")).toBeVisible();
