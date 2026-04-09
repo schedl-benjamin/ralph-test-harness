@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ralph Test Harness</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 600px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { margin-bottom: 0.5rem; }
+    section { border: 1px solid #ddd; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+    label { display: block; margin: 0.5rem 0 0.25rem; font-weight: 600; }
+    input, select { padding: 0.4rem; font-size: 1rem; border: 1px solid #ccc; border-radius: 4px; }
+    button { padding: 0.5rem 1rem; font-size: 1rem; cursor: pointer; border: none; border-radius: 4px; background: #2563eb; color: #fff; margin-top: 0.5rem; }
+    button:hover { background: #1d4ed8; }
+    .result { margin-top: 0.75rem; padding: 0.5rem; background: #f0f9ff; border-radius: 4px; min-height: 1.5rem; }
+    .error { background: #fef2f2; color: #dc2626; }
+  </style>
+</head>
+<body>
+  <h1>Ralph Test Harness</h1>
+
+  <section id="calculator-section">
+    <h2>Calculator</h2>
+    <label for="num-a">First number</label>
+    <input id="num-a" type="number" placeholder="0" data-testid="num-a">
+    <label for="operation">Operation</label>
+    <select id="operation" data-testid="operation">
+      <option value="add">Add (+)</option>
+      <option value="subtract">Subtract (−)</option>
+      <option value="multiply">Multiply (×)</option>
+      <option value="divide">Divide (÷)</option>
+    </select>
+    <label for="num-b">Second number</label>
+    <input id="num-b" type="number" placeholder="0" data-testid="num-b">
+    <br>
+    <button id="calc-btn" data-testid="calc-btn">Calculate</button>
+    <div id="calc-result" class="result" data-testid="calc-result"></div>
+  </section>
+
+  <section id="greeter-section">
+    <h2>Greeter</h2>
+    <label for="name-input">Name</label>
+    <input id="name-input" type="text" placeholder="Enter your name" data-testid="name-input">
+    <br>
+    <button id="greet-btn" data-testid="greet-btn">Greet</button>
+    <button id="farewell-btn" data-testid="farewell-btn">Farewell</button>
+    <div id="greet-result" class="result" data-testid="greet-result"></div>
+  </section>
+
+  <script>
+    const calcBtn = document.getElementById('calc-btn');
+    const greetBtn = document.getElementById('greet-btn');
+    const farewellBtn = document.getElementById('farewell-btn');
+
+    calcBtn.addEventListener('click', async () => {
+      const a = parseFloat(document.getElementById('num-a').value);
+      const b = parseFloat(document.getElementById('num-b').value);
+      const operation = document.getElementById('operation').value;
+      const resultEl = document.getElementById('calc-result');
+
+      if (isNaN(a) || isNaN(b)) {
+        resultEl.textContent = 'Both inputs must be numbers';
+        resultEl.className = 'result error';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/calculate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ a, b, operation })
+        });
+        const data = await res.json();
+        if (data.error) {
+          resultEl.textContent = data.error;
+          resultEl.className = 'result error';
+        } else {
+          resultEl.textContent = `Result: ${data.result}`;
+          resultEl.className = 'result';
+        }
+      } catch (err) {
+        resultEl.textContent = 'Request failed';
+        resultEl.className = 'result error';
+      }
+    });
+
+    async function callGreeter(endpoint) {
+      const name = document.getElementById('name-input').value;
+      const resultEl = document.getElementById('greet-result');
+
+      if (!name.trim()) {
+        resultEl.textContent = 'Please enter a name';
+        resultEl.className = 'result error';
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/${endpoint}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name })
+        });
+        const data = await res.json();
+        resultEl.textContent = data.greeting || data.farewell || data.error;
+        resultEl.className = data.error ? 'result error' : 'result';
+      } catch (err) {
+        resultEl.textContent = 'Request failed';
+        resultEl.className = 'result error';
+      }
+    }
+
+    greetBtn.addEventListener('click', () => callGreeter('greet'));
+    farewellBtn.addEventListener('click', () => callGreeter('farewell'));
+  </script>
+</body>
+</html>

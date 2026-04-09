@@ -4,17 +4,24 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "dev": "tsx src/server.ts",
     "test": "vitest run",
+    "test:e2e": "playwright test",
     "typecheck": "tsc --noEmit",
     "ralph": "pnpm tsx .sandcastle/sequential-loop/main.ts",
     "ralph:simple": "pnpm tsx .sandcastle/simple-loop/main.ts",
+    "ralph:codex": "pnpm tsx .sandcastle/codex-loop/main.ts",
+    "qa:codex": "pnpm tsx .sandcastle/codex-qa/main.ts",
     "sandcastle:build": "cp package.json .sandcastle/_package.json && cp pnpm-lock.yaml .sandcastle/_pnpm-lock.yaml && pnpm sandcastle build-image --image-name sandcastle:ralph-test-harness"
   },
   "dependencies": {
     "@ai-hero/sandcastle": "^0.1.8",
+    "express": "^5.2.1",
     "tsx": "^4.21.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "@types/express": "^5.0.6",
     "typescript": "^5.8.0",
     "vitest": "^3.0.0"
   },
