@@ -14,3 +14,8 @@ export function divide(a: number, b: number): number {
   if (b === 0) throw new Error("Cannot divide by zero");
   return a / b;
 }
+
+export function power(base: number, exp: number): number {
+  if (exp === 0) return 1;
+  return base ** exp;
+}
