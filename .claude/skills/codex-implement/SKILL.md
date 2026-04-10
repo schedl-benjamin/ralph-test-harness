@@ -37,5 +37,5 @@ Or invoke via slash command: `/codex-implement`
 |--------|-------------|-------------------|
 | Implementer | Claude Code (Sonnet) in Docker | Codex CLI (GPT-5.4) on host |
 | Commit prefix | `RALPH:` | `CODEX:` |
-| Sandbox | Docker container | Codex built-in sandbox |
+| Sandbox | Docker container | Codex --full-auto sandbox |
 | Planner | Claude in Docker | Same (Claude in Docker) |

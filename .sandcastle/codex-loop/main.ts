@@ -77,6 +77,14 @@ function buildPrompt(
 async function main() {
   console.log("=== Codex Implementation Loop ===\n");
 
+
+  // Pre-flight: verify frontend env is configured (needed for E2E validation)
+  const frontendEnv = resolve(process.cwd(), "frontend", ".env.local");
+  if (existsSync(resolve(process.cwd(), "frontend")) && !existsSync(frontendEnv)) {
+    console.error("WARNING: frontend/.env.local missing — E2E tests will see a blank app.");
+    console.error("  Copy credentials from frontend/.env.example.");
+  }
+
   if (!existsSync(WORKTREE_DIR)) {
     mkdirSync(WORKTREE_DIR, { recursive: true });
   }

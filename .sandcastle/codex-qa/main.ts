@@ -20,6 +20,9 @@ try {
   }
 } catch {}
 
+// Force OAuth auth — API key has no quota
+delete process.env.OPENAI_API_KEY;
+
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
 interface QASection {
@@ -154,17 +157,14 @@ function runCodexVerify(
   const outputFile = `/tmp/codex-qa-${section.id}.txt`;
 
   try {
-    const isWindows = process.platform === "win32";
-    const sandboxFlag = isWindows
-      ? "--dangerously-bypass-approvals-and-sandbox"
-      : "--full-auto";
+    // Codex built-in sandbox handles isolation.
+    const sandboxFlag = "--full-auto";
 
-    const result = spawnSync(
+    const spawnResult = spawnSync(
       "codex",
       [
         "exec",
         sandboxFlag,
-        "--sandbox", "read-only",
         "-m", "gpt-5.4",
         "-o", outputFile,
         "-",  // read prompt from stdin
@@ -179,38 +179,40 @@ function runCodexVerify(
       }
     );
 
-    if (result.error) throw result.error;
+    if (spawnResult.error) throw spawnResult.error;
 
     // Read result
-    let result: string;
+    let output: string;
     try {
-      result = readFileSync(outputFile, "utf-8");
+      output = readFileSync(outputFile, "utf-8");
     } catch {
-      result = "";
+      output = "";
     }
 
     // Parse results — look for PASS/FAIL markers in output
     const passed: string[] = [];
     const failed: string[] = [];
 
+    // Parse structured ITEM/STATUS/EVIDENCE blocks from Codex output
+    const blocks = output.split(/(?=ITEM:)/);
     for (const item of section.items) {
-      // Simple heuristic: if the item text appears near a FAIL/FAILING/ERROR marker, it failed
-      // Otherwise assume it passed (optimistic)
-      const itemLower = item.toLowerCase();
-      const resultLower = result.toLowerCase();
-
-      if (
-        resultLower.includes(`fail`) &&
-        resultLower.includes(itemLower.slice(0, 30))
-      ) {
-        failed.push(item);
+      const block = blocks.find((b) =>
+        b.toLowerCase().includes(item.toLowerCase().slice(0, 40))
+      );
+      if (block) {
+        const statusMatch = block.match(/STATUS:\s*(PASS|FAIL)/i);
+        if (statusMatch && statusMatch[1].toUpperCase() === "PASS") {
+          passed.push(item);
+        } else {
+          failed.push(item);
+        }
       } else {
-        passed.push(item);
+        failed.push(item);
       }
     }
 
     // If Codex output is empty or couldn't parse, mark all as needing manual check
-    if (!result.trim()) {
+    if (!output.trim()) {
       return { passed: [], failed: section.items };
     }
 
